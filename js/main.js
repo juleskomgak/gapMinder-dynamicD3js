@@ -11,20 +11,20 @@ var width = 600 - margin.left - margin.right,
 var time = 0;
 	
 var area = d3.scaleLinear()
-    .range([25*Math.PI, 1500*Math.PI])
-	.domain([2000, 1400000000]);
+             .range([25*Math.PI, 1500*Math.PI])
+	         .domain([2000, 1400000000]);
 
 // x scale	
 var xScale = d3.scaleLog()
-.base(10)
-.domain([300, 150000])
-.range([0, width]);
+               .base(10)
+               .domain([300, 150000])
+               .range([0, width]);
 
 
 // y scale
 var yScale = d3.scaleLinear()
-.domain([90, 0])
-.range([0, height]);
+               .domain([90, 0])
+               .range([0, height]);
     
 var g = d3.select("#chart-area")
         .append("svg")
@@ -57,18 +57,43 @@ var timeLabel = g.append("text")
 	.text("1800");
 var continentColor = d3.scaleOrdinal(d3.schemePastel1);
 
+// create the legend 
+
+var continents = ["africa", "america", "asia", "europe"];
+
+var legend = g.append("g")
+				.attr("transform", "translate("+(width-10)+","+(height-125)+")" )
+
+continents.forEach((continent,i) => {
+
+	var legendRow = legend.append("g").attr("transform", "translate(0,"+i*20+")");
+		 
+	    legendRow.append("rect")
+				.attr("width", 10 )
+				.attr("height", 10 )
+				.attr("fill", continentColor(continent) );
+		legendRow.append("text")
+				.attr("x", -10)
+				.attr("y", 10)
+				.attr("text-anchor", "end")
+				.style("text-tranform", "capitalise")
+				.text(continent);
+
+} );
+
 d3.json("data/data.json").then(function(data){
 	
 	console.log(data);
 // filter null data
 
 const formattedData  = data.map(year => { return year["countries"].filter(country => {
-	var data_n= (country.income && country.life_exp);
-	return data_n;
-})}).map(d => { d.income = + d.income;
-				d.life_exp = +d.life_exp;
-				return d;
-   })
+	                            var data_n= (country.income && country.life_exp);
+	                             return data_n;
+                               })})
+                           .map(d => { d.income = + d.income;
+				              d.life_exp = +d.life_exp;
+				              return d;
+                             })
 
 	
 	//console.log(data.countries[0]);
